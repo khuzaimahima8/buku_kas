@@ -16,6 +16,13 @@ void main() => runApp(const MaterialApp(
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
+  //daftar transaksi sementara (masih di memori HP)
+  List<Map<String, dynamic>> riwayatTransaksi = [];
+  double totalSaldo = 5000000; //saldo awal sesuai gambar kamu
+
+  //constroler untuk mengambil teks dari inputan
+  final TextEditingController nominalController = TextEditingController();
+  final TextEditingController keteranganController = TextEditingController();
   final List<Widget> _page = [const HomePage(), const RiwayatPage()];
   
   @override
@@ -54,7 +61,7 @@ class _MainNavigationState extends State<MainNavigation> {
         ),
     );
   }
-}
+
 
 //popup from tambah(crud)
 void _showFormTambah(BuildContext context){
@@ -73,7 +80,10 @@ void _showFormTambah(BuildContext context){
         const SizedBox(height: 20),
         const Text("Tambah Transaksi Baru", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
-        TextField(decoration: InputDecoration(labelText: "Nominal", prefixText: "Rp", border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)))),
+        TextField(
+          controller: nominalController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(labelText: "Nominal", prefixText: "Rp", border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)))),
         const SizedBox(height: 15),
         TextField(decoration: InputDecoration(labelText: "Keterangan", border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)))),
         const SizedBox(height: 20),
@@ -81,14 +91,34 @@ void _showFormTambah(BuildContext context){
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10))),
-            onPressed: () => Navigator.pop(context),
-             child: const Text("Simpan Transaksi", style: TextStyle(color: Colors.white)),
+            onPressed: () {
+              setState((){
+                //1. ambil angka dari inputan
+                double nominal = double.parse(nominalController.text);
+                 
+                 //2. update saldo utama
+                 totalSaldo += nominal;
+                
+                //3. masukkan data ke daftar riwayat
+                riwayatTransaksi.add({
+                  'judul' : keteranganController.text,
+                  'jumlah' : nominal,
+                  'tanggal' : 'Hari ini',
+                });
+                //4. bersikan form agar kosong saat dibuka lagi
+                nominalController.clear();
+                keteranganController.clear();
+
+                //5. tutup popup panel bawah
+                Navigator.pop(context);
+              });
+            },
+              child: const Text("Simpan Transaksi"))
              ),
-        ),
         const SizedBox(height: 30)
       ],
     ),
     ),
     );
+}
 }
