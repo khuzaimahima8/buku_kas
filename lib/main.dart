@@ -23,12 +23,14 @@ class _MainNavigationState extends State<MainNavigation> {
   //constroler untuk mengambil teks dari inputan
   final TextEditingController nominalController = TextEditingController();
   final TextEditingController keteranganController = TextEditingController();
-  final List<Widget> _page = [const HomePage(), const RiwayatPage()];
+  late final List<Widget> _pages = [
+    const HomePage(), 
+    RiwayatPage(data: riwayatTransaksi)];//kirim data kesini
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _page[_currentIndex],
+      body: _pages[_currentIndex],
       //Tombol Tambah Transaksi Di Tengah
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showFormTambah(context),
