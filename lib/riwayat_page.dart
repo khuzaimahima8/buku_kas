@@ -4,7 +4,10 @@ class RiwayatPage extends StatelessWidget{
   //ini adalah penampung data yang dikirim dari main.dart
   final List<Map<String, dynamic>> data;
 
-  const RiwayatPage({super.key, required this.data});
+  //tempat menampung perintah edit yang dikirim dari main.dart
+  final Function(int) onEdit;
+
+  const RiwayatPage({super.key, required this.data, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +24,27 @@ class RiwayatPage extends StatelessWidget{
             backgroundColor: Colors.green,
             child: Icon(Icons.add,color: Colors.white),
           ),
-          title: Text(data[index]['judul']),
-          subtitle: const Text("Hari ini"),
-          trailing: Text(
-            "Rp ${data[index]['jumlah']}",
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.green
-            ),
-          ),
+          //menampilkan keterangan/judul sesuai yang diketik
+          title: Text(data[index]['judul'] ?? "Tanpa keterangan"),
+          subtitle: Text(data[index]['tanggal'] ?? "Hari ini"),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Rp ${data[index]['jumlah']}",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green
+                ),
+              ),
+              const SizedBox(width: 10),
+              //Tombol edit (ikon pensil)
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.orange),
+                onPressed: () => onEdit(index),//memicu fungsi edit berdasarkan nomor urut
+                ),
+            ],
+          )
         );
         })
     );
