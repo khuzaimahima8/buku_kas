@@ -7,7 +7,7 @@ void main() => runApp(const MaterialApp(
       debugShowCheckedModeBanner: false,
     ));
 
-    class MainNavigation extends StatefulWidget {
+class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
 
   @override
@@ -16,111 +16,80 @@ void main() => runApp(const MaterialApp(
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
-  //daftar transaksi sementara (masih di memori HP)
   List<Map<String, dynamic>> riwayatTransaksi = [];
-  double totalSaldo = 5000000; //saldo awal sesuai gambar kamu
+  double totalSaldo = 5000000;
 
-  //constroler untuk mengambil teks dari inputan
   final TextEditingController nominalController = TextEditingController();
   final TextEditingController keteranganController = TextEditingController();
-  late final List<Widget> _pages = [
-    const HomePage(), 
-    RiwayatPage(data: riwayatTransaksi)];//kirim data kesini
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_currentIndex],
-      //Tombol Tambah Transaksi Di Tengah
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showFormTambah(context),
-        backgroundColor: const Color(0xFF2962FF),
-        child: const Icon(Icons.add, size: 30, color: Colors.white),
+
+  void simpanTransaksi() {
+    if (nominalController.text.isEmpty || keteranganController.text.isEmpty) return;
+
+    double inputNominal = double.tryParse(nominalController.text) ?? 0;
+    DateTime sekarang = DateTime.now();
+
+    setState(() {
+      totalSaldo -= inputNominal; // Mengurangi saldo
+      riwayatTransaksi.add({
+        'judul': keteranganController.text,
+        'jumlah': inputNominal,
+        'tanggal': "${sekarang.day}/${sekarang.month}",
+      });
+      nominalController.clear();
+      keteranganController.clear();
+    });
+    Navigator.pop(context); // Tutup pop-up setelah simpan
+  }
+
+  // Fungsi untuk memunculkan kotak input (Pop-up)
+  void tampilkanFormInput() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 20, right: 20, top: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Tambah Transaksi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            TextField(controller: keteranganController, decoration: const InputDecoration(labelText: "Keterangan")),
+            TextField(controller: nominalController, decoration: const InputDecoration(labelText: "Nominal"), keyboardType: TextInputType.number),
+            const SizedBox(height: 20),
+            ElevatedButton(onPressed: simpanTransaksi, child: const Text("Simpan")),
+            const SizedBox(height: 20),
+          ],
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 10,
-          child: SizedBox(
-            height: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.home_rounded,
-                  color: _currentIndex == 0 ? Colors.blue : Colors.grey),
-                  onPressed: () => setState(() => _currentIndex = 0),
-                  ),
-                  const SizedBox(width: 40), //Ruang untuk tombol +
-                  IconButton(
-                    icon: Icon(Icons.receipt_long_rounded,
-                    color: _currentIndex == 1 ? Colors.blue: Colors.grey),
-                    onPressed: () => setState(() => _currentIndex =1),
-                    ),
-              ],
-            ),
-          ),
-        ),
+      ),
     );
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      HomePage(saldo: totalSaldo, riwayat: riwayatTransaksi),
+      RiwayatPage(data: riwayatTransaksi, onEdit: (i) {}),
+    ];
 
-//popup from tambah(crud)
-void _showFormTambah(BuildContext context){
-  showModalBottomSheet(context: context, 
-  isScrollControlled: true,
-  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-  builder: (context) => Padding(
-    padding: EdgeInsets.only(
-      bottom: MediaQuery.of(context). viewInsets.bottom,
-      left: 20, right: 20, top: 20
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(width: 50, height: 5, decoration: BoxDecoration(color: Colors.grey[300],borderRadius: BorderRadius.circular(10))),
-        const SizedBox(height: 20),
-        const Text("Tambah Transaksi Baru", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
-        TextField(
-          controller: nominalController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: "Nominal", prefixText: "Rp", border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)))),
-        const SizedBox(height: 15),
-        TextField(decoration: InputDecoration(labelText: "Keterangan", border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)))),
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: () {
-              setState((){
-                //1. ambil angka dari inputan
-                double nominal = double.parse(nominalController.text);
-                 
-                 //2. update saldo utama
-                 totalSaldo += nominal;
-                
-                //3. masukkan data ke daftar riwayat
-                riwayatTransaksi.add({
-                  'judul' : keteranganController.text,
-                  'jumlah' : nominal,
-                  'tanggal' : 'Hari ini',
-                });
-                //4. bersikan form agar kosong saat dibuka lagi
-                nominalController.clear();
-                keteranganController.clear();
-
-                //5. tutup popup panel bawah
-                Navigator.pop(context);
-              });
-            },
-              child: const Text("Simpan Transaksi"))
-             ),
-        const SizedBox(height: 30)
-      ],
-    ),
-    ),
+    return Scaffold(
+      body: pages[_currentIndex],
+      floatingActionButton: FloatingActionButton(
+        onPressed: tampilkanFormInput,
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(icon: const Icon(Icons.home), onPressed: () => setState(() => _currentIndex = 0)),
+            const SizedBox(width: 40), // Ruang untuk tombol +
+            IconButton(icon: const Icon(Icons.history), onPressed: () => setState(() => _currentIndex = 1)),
+          ],
+        ),
+      ),
     );
-}
+  }
 }
