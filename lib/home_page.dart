@@ -8,6 +8,16 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //menghitung total pemasukkan
+    double totalmasuk = riwayat
+    .where((item) => item['tipe'] == 'masuk')
+    .fold(0, (sum, item) => sum + item['jumlah']);
+
+    //menghitung total pengeluaran
+    double totalkeluar = riwayat
+    .where((item) => item['tipe'] == 'keluar')
+    .fold(0, (sum, item) => sum + item['jumlah']);
+
     return Scaffold(
       appBar: AppBar(title: const Text("Dashboard"), backgroundColor: Colors.green),
       body: SingleChildScrollView(
@@ -32,9 +42,53 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
+
+              //barisan rekap (pemasukan & pengeluaran)
+              Row(
+                children: [
+                  //kotak pemasukan
+                  Expanded(child: Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.green.shade100),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text("pemasukan", style: TextStyle(color: Colors.green, fontSize: 12)),
+                        Text("Rp ${totalmasuk.toStringAsFixed(0)}",
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ),
+                  const SizedBox(width: 10),
+                  //kotak pengeluaran
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Colors.red.shade100),
+                      ),
+                      child: Column(
+                        children: [
+                          const Text("pegeluaran", style: TextStyle(color: Colors.red, fontSize: 12)),
+                          Text("Rp ${totalkeluar.toStringAsFixed(0)}",
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                          ),
+                        ],
+                      ),
+                    )
+                  )
+                ],
+              ),
               
               // Area Grafik Sederhana
-              const Align(alignment: Alignment.centerLeft, child: Text("Grafik Pengeluaran", style: TextStyle(fontWeight: FontWeight.bold))),
+              Align(alignment: Alignment.centerLeft, child: const Text("Grafik Pengeluaran", style: TextStyle(fontWeight: FontWeight.bold))),
               const SizedBox(height: 10),
               Container(
                 height: 150,
