@@ -18,6 +18,7 @@ class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
   List<Map<String, dynamic>> riwayatTransaksi = [];
   double totalSaldo = 5000000;
+  bool isPemasukan = true;
 
   final TextEditingController nominalController = TextEditingController();
   final TextEditingController keteranganController = TextEditingController();
@@ -29,14 +30,20 @@ class _MainNavigationState extends State<MainNavigation> {
     DateTime sekarang = DateTime.now();
 
     setState(() {
-      totalSaldo -= inputNominal; // Mengurangi saldo
+      if (isPemasukan){
+        totalSaldo += inputNominal; //menambah saldo jika pemasukan
+      } else {
+        totalSaldo -= inputNominal; //mengurangisaldo jika pengeluaran
+      }
       riwayatTransaksi.add({
-        'judul': keteranganController.text,
-        'jumlah': inputNominal,
-        'tanggal': "${sekarang.day}/${sekarang.month}",
+        'judul' : keteranganController.text,
+        'jumlah' : inputNominal,
+        'tipe' : isPemasukan ? 'masuk' : 'keluar', //tanda tipe tranaksi
+        'tanggal' : "${sekarang.day}/${sekarang.month}",
       });
       nominalController.clear();
       keteranganController.clear();
+      isPemasukan = true; //reset pilihan ke default setelah disimpan
     });
     Navigator.pop(context); // Tutup pop-up setelah simpan
   }

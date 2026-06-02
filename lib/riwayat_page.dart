@@ -19,10 +19,11 @@ class RiwayatPage extends StatelessWidget{
       : ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index){
+          bool isMasuk = data[index]['tipe'] == 'masuk';
         return ListTile(
-          leading: const CircleAvatar(
-            backgroundColor: Colors.green,
-            child: Icon(Icons.add,color: Colors.white),
+          leading: CircleAvatar(
+            backgroundColor: isMasuk ? Colors.green : Colors.red,
+            child: Icon( isMasuk ? Icons.add : Icons.remove,color: Colors.white),
           ),
           //menampilkan keterangan/judul sesuai yang diketik
           title: Text(data[index]['judul'] ?? "Tanpa keterangan"),
