@@ -81,9 +81,39 @@ class _MainNavigationState extends State<MainNavigation> {
                 ],
               ),
               const SizedBox(height: 10),
-            ],
+          const SizedBox(height: 15),
+
+          TextField(
+            controller: keteranganController,
+            decoration: const InputDecoration(
+              labelText: "Keterangan",
+              border: OutlineInputBorder(),
+            ),
           ),
-        )
+          const SizedBox(height: 15),
+
+          TextField(
+            controller: nominalController,
+            decoration: const InputDecoration(
+              labelText: "Nominal",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 20),
+
+          ElevatedButton(
+            onPressed: simpanTransaksi,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isPemasukan ? Colors.green : Colors.red,
+              minimumSize: const Size(double.infinity, 45),
+            ),
+            child: const Text("Simpan", style: TextStyle(color: Colors.white)),
+          ),
+          const SizedBox(height: 20),
+           ],
+          ),
+        ),
         )
     );
   }
