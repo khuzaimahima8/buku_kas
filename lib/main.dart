@@ -53,20 +53,38 @@ class _MainNavigationState extends State<MainNavigation> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 20, right: 20, top: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Tambah Transaksi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            TextField(controller: keteranganController, decoration: const InputDecoration(labelText: "Keterangan")),
-            TextField(controller: nominalController, decoration: const InputDecoration(labelText: "Nominal"), keyboardType: TextInputType.number),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: simpanTransaksi, child: const Text("Simpan")),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 20, right: 20, top: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Tambah Transaksi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              const SizedBox(height: 10),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ChoiceChip(
+                    label: const Text("Pemasukan"),
+                     selected: isPemasukan,
+                     selectedColor: Colors.green.shade200,
+                     onSelected: (val) => setModalState(() => isPemasukan = true),
+                     ),
+                     const SizedBox(width: 10),
+                     ChoiceChip(
+                      label: const Text("Pengeluaran"), 
+                      selected: !isPemasukan,
+                      selectedColor: Colors.red.shade200,
+                      onSelected: (val) => setModalState(() => isPemasukan = false),
+                      ),
+                ],
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        )
+        )
     );
   }
 
