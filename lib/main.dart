@@ -8,7 +8,7 @@ void main() async {
   
   // 🟢 KUNCI PENGHUBUNG ONLINE
   await Supabase.initialize(
-    url: 'https://supabase.co', // ⬅️ Pastikan sesuai URL Anda
+    url: 'https://supabase.com/dashboard/project/ncovxzcnbgtjbyhyjtzv/settings/general', // ⬅️ Pastikan sesuai URL Anda
     publishableKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jb3Z4emNuYmd0amJ5aHlqdHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2OTc0NzcsImV4cCI6MjA5NzI3MzQ3N30.2oGZT5nDUJmh8vaykl2PqMvS6YLVqwFbHQvMIJYropY',
   );
 
